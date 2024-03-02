@@ -1,7 +1,9 @@
 package com.example.atacadista.controller;
 
 import com.example.atacadista.domain.Cliente;
+import com.example.atacadista.dto.ClienteCadastroDTO;
 import com.example.atacadista.repository.ClienteRepository;
+import jakarta.validation.Valid;
 import org.springframework.data.domain.Example;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -20,7 +22,8 @@ public class ClienteController {
     }
 
     @PostMapping
-    public Cliente novoCliente(@RequestBody Cliente model) {
+    public Cliente novoCliente(@Valid @RequestBody ClienteCadastroDTO dto) {
+        var model = new Cliente(dto.getNome(), dto.getCpf(), dto.getUf());
         return repository.save(model);
     }
 

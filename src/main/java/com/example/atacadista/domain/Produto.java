@@ -15,6 +15,7 @@ public class Produto {
     private int tipoEmbalagem;
 
     @ManyToOne
+    @JoinColumn(name = "codigo_categoria", referencedColumnName = "codigo")
     private Categoria categoria;
 
     @Column(nullable = false)
