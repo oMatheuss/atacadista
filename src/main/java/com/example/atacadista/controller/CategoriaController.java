@@ -2,6 +2,7 @@ package com.example.atacadista.controller;
 
 import com.example.atacadista.domain.Categoria;
 import com.example.atacadista.repository.CategoriaRepository;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -17,6 +18,7 @@ public class CategoriaController {
     }
 
     @PostMapping
+    @ResponseStatus(HttpStatus.CREATED)
     public Categoria novaCategoria(@RequestBody Categoria model) {
         return repository.save(model);
     }
