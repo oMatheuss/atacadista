@@ -22,7 +22,7 @@ public class PedidoController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public Pedido novoPedido(@Valid @RequestBody PedidoCadastroDTO dto) throws Exception {
+    public Pedido novoPedido(@Valid @RequestBody PedidoCadastroDTO dto) {
         return pedidoService.cadastrarPedido(dto);
     }
 }

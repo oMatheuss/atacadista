@@ -1,31 +1,24 @@
 package com.example.atacadista;
 
+import com.example.atacadista.exception.BusinessException;
 import org.springframework.context.support.DefaultMessageSourceResolvable;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatusCode;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
-import org.springframework.web.context.request.ServletWebRequest;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
-import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 @ControllerAdvice
-public class ExceptionHandler extends ResponseEntityExceptionHandler {
+public class AppExceptionHandler extends ResponseEntityExceptionHandler {
 
     @Override
     protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex, HttpHeaders headers, HttpStatusCode status, WebRequest request) {
 
-        Map<String, Object> objectBody = new HashMap<>();
-        objectBody.put("timestamp", new Date());
-        objectBody.put("status", status.value());
-        objectBody.put("path", ((ServletWebRequest)request).getRequest().getRequestURL().toString());
+        var problem = ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST, "Erro ao processar corpo da requisição");
 
         // Erros de validação do jakarta api
         List<String> exceptionalErrors
@@ -35,8 +28,14 @@ public class ExceptionHandler extends ResponseEntityExceptionHandler {
                 .map(DefaultMessageSourceResolvable::getDefaultMessage)
                 .collect(Collectors.toList());
 
-        objectBody.put("errors", exceptionalErrors);
+        problem.setProperty("errors", exceptionalErrors);
 
-        return new ResponseEntity<>(objectBody, status);
+        return new ResponseEntity<>(problem, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(BusinessException.class)
+    public ResponseEntity<ProblemDetail> handleBusinessException(BusinessException ex) {
+        return ResponseEntity.status(ex.getStatusCode())
+                .body(ex.getBody());
     }
 }

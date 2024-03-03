@@ -3,14 +3,11 @@ package com.example.atacadista.service;
 import com.example.atacadista.domain.ItemPedido;
 import com.example.atacadista.domain.Pedido;
 import com.example.atacadista.dto.PedidoCadastroDTO;
+import com.example.atacadista.exception.BusinessException;
 import com.example.atacadista.repository.ClienteRepository;
-import com.example.atacadista.repository.ItemPedidoRepository;
 import com.example.atacadista.repository.PedidoRepository;
 import com.example.atacadista.repository.ProdutoRepository;
 import org.springframework.stereotype.Service;
-
-import java.util.HashSet;
-import java.util.Set;
 
 @Service
 public class PedidoService {
@@ -27,9 +24,10 @@ public class PedidoService {
         this.produtoRepository = produtoRepository;
     }
 
-    public Pedido cadastrarPedido(PedidoCadastroDTO dto) throws Exception {
+    public Pedido cadastrarPedido(PedidoCadastroDTO dto) {
         var cliente = clienteRepository.findByCpf(dto.getCpfCliente())
-                .orElseThrow(() -> new Exception("cpf informado não cadastrado"));
+                .orElseThrow(() -> new BusinessException(
+                        String.format("cpf informado (%s) não cadastrado", dto.getCpfCliente())));
 
         var pedido = new Pedido(cliente, 0);
 
@@ -37,8 +35,12 @@ public class PedidoService {
         double valorTotal = 0D;
 
         for (var item : dto.getItens()) {
+            int _numeroItem = numeroItem;
+
             var produto = produtoRepository.findById(item.getCodigoProduto())
-                    .orElseThrow(() -> new Exception("item informado não existe"));
+                    .orElseThrow(() -> new BusinessException(
+                            String.format("item %d: codigo (%d) informado não existe",
+                                    _numeroItem, item.getCodigoProduto())));
 
             double preco = produto.getPreco();
             double valorVenda = item.getValorVenda();
@@ -47,7 +49,8 @@ public class PedidoService {
             float desconto = 1F - (float) (valorVenda / preco);
 
             if (desconto > descontoMaximo) {
-                throw new Exception("desconto maior que o permitido");
+                throw new BusinessException(String.format("item %d: desconto maior que o permitido (%.4f)",
+                        _numeroItem, produto.getPercentualMaximoDesconto()));
             }
 
             var valorTotalItem = item.getValorVenda() * item.getQuantidade();
