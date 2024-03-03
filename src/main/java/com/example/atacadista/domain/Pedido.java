@@ -16,7 +16,7 @@ public class Pedido {
     @JoinColumn(name = "codigo_cliente", nullable = false)
     private Cliente cliente;
 
-    @OneToMany(mappedBy = "pedido")
+    @OneToMany(mappedBy = "pedido", cascade = CascadeType.ALL)
     private Set<ItemPedido> itens = new HashSet<>();
 
     @Column(nullable = false)
@@ -55,5 +55,10 @@ public class Pedido {
 
     public void setValorTotal(double valorTotal) {
         this.valorTotal = valorTotal;
+    }
+
+    public void addItem(ItemPedido item) {
+        item.setPedido(this);
+        itens.add(item);
     }
 }

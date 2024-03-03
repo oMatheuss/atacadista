@@ -1,17 +1,22 @@
 package com.example.atacadista.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
+import java.io.Serializable;
+import java.util.Objects;
+
 @Entity
+@IdClass(ItemPedido.ItemPedidoPK.class)
 public class ItemPedido {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer numeroItem;
 
     @Id
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "codigo_pedido", nullable = false)
+    @JsonIgnore
     private Pedido pedido;
 
     @ManyToOne
@@ -32,13 +37,17 @@ public class ItemPedido {
 
     public ItemPedido() {}
 
-    public ItemPedido(Pedido pedido, Produto produto) {
-        this.pedido = pedido;
+    public ItemPedido(Integer numeroItem, Produto produto) {
+        this.numeroItem = numeroItem;
         this.produto = produto;
     }
 
     public Integer getNumeroItem() {
         return numeroItem;
+    }
+
+    public void setNumeroItem(Integer numeroItem) {
+        this.numeroItem = numeroItem;
     }
 
     public Pedido getPedido() {
@@ -87,5 +96,30 @@ public class ItemPedido {
 
     public void setPercentualDesconto(float percentualDesconto) {
         this.percentualDesconto = percentualDesconto;
+    }
+
+    public static class ItemPedidoPK implements Serializable {
+        protected Integer numeroItem;
+        protected Pedido pedido;
+
+        public ItemPedidoPK() {}
+
+        public ItemPedidoPK(Integer numeroItem, Pedido pedido) {
+            this.numeroItem = numeroItem;
+            this.pedido = pedido;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+            ItemPedidoPK that = (ItemPedidoPK) o;
+            return Objects.equals(numeroItem, that.numeroItem) && Objects.equals(pedido, that.pedido);
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(numeroItem, pedido);
+        }
     }
 }
