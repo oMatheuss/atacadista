@@ -24,7 +24,7 @@ public class ClienteController {
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public Cliente novoCliente(@Valid @RequestBody ClienteCadastroDTO dto) {
-        var model = new Cliente(dto.getNome(), dto.getCpf(), dto.getUf());
+        var model = new Cliente(dto.nome(), dto.cpf(), dto.uf());
         return repository.save(model);
     }
 

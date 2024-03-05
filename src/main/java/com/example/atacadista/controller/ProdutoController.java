@@ -1,6 +1,5 @@
 package com.example.atacadista.controller;
 
-import com.example.atacadista.domain.Categoria;
 import com.example.atacadista.domain.Produto;
 import com.example.atacadista.dto.ProdutoCadastroDTO;
 import com.example.atacadista.dto.ProdutoQueryDTO;
@@ -28,10 +27,10 @@ public class ProdutoController {
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public Produto novoProduto(@Valid @RequestBody ProdutoCadastroDTO dto) {
-        var model = new Produto(dto.getDescricao(), dto.getPreco(), dto.getPercentualMaximoDesconto());
-        model.setTipoEmbalagem(dto.getTipoEmbalagem());
+        var model = new Produto(dto.descricao(), dto.preco(), dto.percentualMaximoDesconto());
+        model.setTipoEmbalagem(dto.tipoEmbalagem());
 
-        var categoria = categoriaRepository.findById(dto.getCodigoCategoria())
+        var categoria = categoriaRepository.findById(dto.codigoCategoria())
                         .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "A categoria informada não existe"));
         model.setCategoria(categoria);
 
@@ -40,7 +39,7 @@ public class ProdutoController {
 
     @GetMapping
     public List<Produto> listarProdutor(ProdutoQueryDTO dto) {
-        return repository.findByDescricao(dto.getDescricaoProduto(), dto.getDescricaoCategoria());
+        return repository.findByDescricao(dto.descricaoProduto(), dto.descricaoCategoria());
     }
 
     @GetMapping("{codigo}")

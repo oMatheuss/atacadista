@@ -25,25 +25,25 @@ public class PedidoService {
     }
 
     public Pedido cadastrarPedido(PedidoCadastroDTO dto) {
-        var cliente = clienteRepository.findByCpf(dto.getCpfCliente())
+        var cliente = clienteRepository.findByCpf(dto.cpfCliente())
                 .orElseThrow(() -> new BusinessException(
-                        String.format("cpf informado (%s) não cadastrado", dto.getCpfCliente())));
+                        String.format("cpf informado (%s) não cadastrado", dto.cpfCliente())));
 
         var pedido = new Pedido(cliente, 0);
 
         int numeroItem = 1;
         double valorTotal = 0D;
 
-        for (var item : dto.getItens()) {
+        for (var item : dto.itens()) {
             int _numeroItem = numeroItem;
 
-            var produto = produtoRepository.findById(item.getCodigoProduto())
+            var produto = produtoRepository.findById(item.codigoProduto())
                     .orElseThrow(() -> new BusinessException(
                             String.format("item %d: codigo (%d) informado não existe",
-                                    _numeroItem, item.getCodigoProduto())));
+                                    _numeroItem, item.codigoProduto())));
 
             double preco = produto.getPreco();
-            double valorVenda = item.getValorVenda();
+            double valorVenda = item.valorVenda();
 
             float descontoMaximo = produto.getPercentualMaximoDesconto() / 100F;
             float desconto = 1F - (float) (valorVenda / preco);
@@ -53,12 +53,12 @@ public class PedidoService {
                         _numeroItem, produto.getPercentualMaximoDesconto()));
             }
 
-            var valorTotalItem = item.getValorVenda() * item.getQuantidade();
+            var valorTotalItem = item.valorVenda() * item.quantidade();
             valorTotal += valorTotalItem;
 
             var itemPedido = new ItemPedido(numeroItem++, produto);
             itemPedido.setValorVenda(valorVenda);
-            itemPedido.setQuantidade(item.getQuantidade());
+            itemPedido.setQuantidade(item.quantidade());
             itemPedido.setValorTotal(valorTotalItem);
             itemPedido.setPercentualDesconto(desconto * 100F);
 
