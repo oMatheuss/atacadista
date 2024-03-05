@@ -17,7 +17,7 @@ public record PedidoCadastroDTO(
     @Size(min = 1, max = 99, message = "O número de itens deve ser maior que 0 e menor que 100")
     List<@Valid Item> itens
 ) {
-	public record Item(
+    public record Item(
         @NotNull(message = "O campo codigoProduto é obrigatório")
         Long codigoProduto,
 
@@ -27,5 +27,5 @@ public record PedidoCadastroDTO(
 
         @NotNull(message = "O campo valorVenda é obrigatório")
         Double valorVenda
-	) {}
+    ) {}
 }

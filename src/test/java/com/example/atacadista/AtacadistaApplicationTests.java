@@ -32,9 +32,9 @@ class AtacadistaApplicationTests {
 
     @Test
     void testSaveClienteWhenValid() throws Exception {
-		var clienteDTO = new ClienteCadastroDTO("Matheus", "abc", "MG");
+        var clienteDTO = new ClienteCadastroDTO("Matheus", "abc", "MG");
 
-		ObjectMapper mapper = new ObjectMapper();
+        ObjectMapper mapper = new ObjectMapper();
 
         // cpf está errado, e a requisição deve retornar status 400
         mockMvc.perform(post("/api/cliente")
@@ -42,7 +42,7 @@ class AtacadistaApplicationTests {
                         .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest());
 
-		clienteDTO = new ClienteCadastroDTO("Matheus", "12345678901", "MG");
+        clienteDTO = new ClienteCadastroDTO("Matheus", "12345678901", "MG");
 
         // tudo ok, deve retornar 201
         mockMvc.perform(post("/api/cliente")
