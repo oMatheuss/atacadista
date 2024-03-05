@@ -2,7 +2,6 @@ package com.example.atacadista.controller;
 
 import com.example.atacadista.domain.Produto;
 import com.example.atacadista.dto.ProdutoCadastroDTO;
-import com.example.atacadista.dto.ProdutoQueryDTO;
 import com.example.atacadista.repository.CategoriaRepository;
 import com.example.atacadista.repository.ProdutoRepository;
 import jakarta.validation.Valid;
@@ -38,8 +37,13 @@ public class ProdutoController {
     }
 
     @GetMapping
-    public List<Produto> listarProdutor(ProdutoQueryDTO dto) {
-        return repository.findByDescricao(dto.descricaoProduto(), dto.descricaoCategoria());
+    public List<Produto> listarProdutor(
+        @RequestParam(required = false) String descricaoCategoria,
+        @RequestParam(required = false) String descricaoProduto
+    ) {
+        if (descricaoCategoria == null) descricaoCategoria = "";
+        if (descricaoProduto == null) descricaoProduto = "";
+        return repository.findByDescricao(descricaoProduto, descricaoCategoria);
     }
 
     @GetMapping("{codigo}")
