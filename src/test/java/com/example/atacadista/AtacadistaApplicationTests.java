@@ -1,7 +1,10 @@
 package com.example.atacadista;
 
 import com.example.atacadista.domain.Cliente;
+import com.example.atacadista.dto.ClienteCadastroDTO;
 import com.example.atacadista.repository.ClienteRepository;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -28,21 +31,26 @@ class AtacadistaApplicationTests {
     private ClienteRepository clienteRepository;
 
     @Test
-    void testSaveCliente() throws Exception {
+    void testSaveClienteWhenValid() throws Exception {
+		var clienteDTO = new ClienteCadastroDTO("Matheus", "abc", "MG");
+
+		ObjectMapper mapper = new ObjectMapper();
+
         // cpf está errado, e a requisição deve retornar status 400
         mockMvc.perform(post("/api/cliente")
-                        .content("{ \"cpf\": \"abc\", \"nome\": \"Matheus\", \"uf\": \"MG\" }")
+                        .content(mapper.writeValueAsString(clienteDTO))
                         .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest());
 
+		clienteDTO = new ClienteCadastroDTO("Matheus", "12345678901", "MG");
+
         // tudo ok, deve retornar 201
         mockMvc.perform(post("/api/cliente")
-                        .content("{ \"cpf\": \"12345678912\", \"nome\": \"Matheus\", \"uf\": \"MG\" }")
+                        .content(mapper.writeValueAsString(clienteDTO))
                         .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON))
                 .andExpect(status().isCreated());
 
-        // a função save do jpa deve ter sido chamada uma vez
+        // a função save do jpa deve ter sido chamada apenas uma vez
         verify(clienteRepository, times(1)).save(any(Cliente.class));
     }
-
 }
