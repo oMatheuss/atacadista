@@ -1,4 +1,4 @@
-package com.example.atacadista;
+package com.example.atacadista.exception;
 
 import com.example.atacadista.exception.BusinessException;
 import org.springframework.context.support.DefaultMessageSourceResolvable;
