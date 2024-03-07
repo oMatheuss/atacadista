@@ -30,4 +30,8 @@ public class BusinessException extends RuntimeException implements ErrorResponse
     public void addError(String message) {
         errors.add(message);
     }
+
+    public List<String> getErrors() {
+        return errors;
+    }
 }

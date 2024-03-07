@@ -5,14 +5,15 @@ import com.example.atacadista.dto.CategoriaCadastroDTO;
 import com.example.atacadista.dto.ClienteCadastroDTO;
 import com.example.atacadista.dto.PedidoCadastroDTO;
 import com.example.atacadista.dto.ProdutoCadastroDTO;
+import com.example.atacadista.exception.BusinessException;
 import com.example.atacadista.repository.CategoriaRepository;
 import com.example.atacadista.repository.ClienteRepository;
 import com.example.atacadista.repository.PedidoRepository;
 import com.example.atacadista.repository.ProdutoRepository;
+import com.example.atacadista.service.PedidoService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -24,6 +25,8 @@ import org.springframework.test.web.servlet.MockMvc;
 import java.util.List;
 import java.util.Optional;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -165,5 +168,52 @@ class AtacadistaApplicationTests {
         var pedidoModel = new Pedido(clienteModel, valorTotal);
         pedidoModel.addItem(itemModel);
         return pedidoModel;
+    }
+
+    @Test
+    void testPedidoServiceThrowsBusinessException() {
+        var pedidoService = new PedidoService(pedidoRepository, clienteRepository, produtoRepository);
+
+        var itemDTO = new PedidoCadastroDTO.Item(1L, 10, 100.99D);
+        var pedidoDTO = new PedidoCadastroDTO("12345678901", List.of(itemDTO));
+
+        // simula quando o cliente informado não for encontrado no banco
+        when(clienteRepository.findByCpf("12345678901")).thenReturn(Optional.empty());
+
+        // consulta de usuario retorna empty
+        BusinessException exception = assertThrows(BusinessException.class, () -> {
+            pedidoService.cadastrarPedido(pedidoDTO);
+        });
+
+        // assert na mensagem de erro
+        assertEquals("cpf informado (12345678901) não cadastrado", exception.getErrors().get(0));
+
+        // agora o cliente deve passar
+        var clienteModel = new Cliente("Matheus", "12345678901", "MG");
+        when(clienteRepository.findByCpf("12345678901")).thenReturn(Optional.of(clienteModel));
+
+        // falha a consulta do produto
+        when(produtoRepository.findById(1L)).thenReturn(Optional.empty());
+
+        // consulta de produto retorna empty
+        exception = assertThrows(BusinessException.class, () -> {
+            pedidoService.cadastrarPedido(pedidoDTO);
+        });
+
+        // assert na mensagem de erro
+        assertEquals("item 1: codigo (1) informado não existe", exception.getErrors().get(0));
+
+        // agora o produto e cliente deve passar
+        var produtoModel = new Produto("liquidificador", 110D, 5F);
+        // retorna produto quando o codigoProduto for 1
+        when(produtoRepository.findById(1L)).thenReturn(Optional.of(produtoModel));
+
+        // porcentagem de desconto no preço maio que o permitido para o produto
+        exception = assertThrows(BusinessException.class, () -> {
+            pedidoService.cadastrarPedido(pedidoDTO);
+        });
+
+        // assert na mensagem de erro
+        assertEquals("item 1: desconto maior que o permitido (5,0000)", exception.getErrors().get(0));
     }
 }
