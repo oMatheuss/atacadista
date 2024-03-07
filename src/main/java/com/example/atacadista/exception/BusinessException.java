@@ -9,7 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class BusinessException extends RuntimeException implements ErrorResponse {
-    private List<String> errors = new ArrayList<>();
+    private final List<String> errors = new ArrayList<>();
 
     public BusinessException(String message) {
         errors.add(message);

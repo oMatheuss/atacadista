@@ -71,7 +71,7 @@ class AtacadistaApplicationTests {
         var model = new Cliente(clienteDTO.nome(), clienteDTO.cpf(), clienteDTO.uf());
 
         // a função save do jpa deve ter sido chamada apenas uma vez, com as informações passadas
-        verify(clienteRepository, times(1)).save(Mockito.eq(model));
+        verify(clienteRepository, times(1)).save(model);
     }
 
     @Test
@@ -95,7 +95,7 @@ class AtacadistaApplicationTests {
         var model = new Categoria(categoriaDTO.descricao());
 
         // funcao save chamada uma vez com os dados enviados
-        verify(categoriaRepository, times(1)).save(eq(model));
+        verify(categoriaRepository, times(1)).save(model);
     }
 
     @Test
@@ -112,7 +112,7 @@ class AtacadistaApplicationTests {
 
         var categoria = new Categoria("bazar");
         // retornar categoria quando o codigoCategoria for 1
-        when(categoriaRepository.findById(eq(1L))).thenReturn(Optional.of(categoria));
+        when(categoriaRepository.findById(1L)).thenReturn(Optional.of(categoria));
 
         // tudo ok, deve retornar 201
         mockMvc.perform(post("/api/produto")
@@ -125,7 +125,7 @@ class AtacadistaApplicationTests {
         model.setTipoEmbalagem(produtoDTO.tipoEmbalagem());
 
         // funcao save chamada uma vez com os dados enviados
-        verify(produtoRepository, times(1)).save(eq(model));
+        verify(produtoRepository, times(1)).save(model);
     }
 
     @Test
@@ -135,11 +135,11 @@ class AtacadistaApplicationTests {
 
         var produtoModel = new Produto("liquidificador", 110D, 9F);
         // retorna produto quando o codigoProduto for 1
-        when(produtoRepository.findById(eq(1L))).thenReturn(Optional.of(produtoModel));
+        when(produtoRepository.findById(1L)).thenReturn(Optional.of(produtoModel));
 
         var clienteModel = new Cliente("Matheus", "12345678901", "MG");
         // retorna produto quando o cpf for 12345678901
-        when(clienteRepository.findByCpf(eq("12345678901"))).thenReturn(Optional.of(clienteModel));
+        when(clienteRepository.findByCpf("12345678901")).thenReturn(Optional.of(clienteModel));
 
         // tudo ok, status deve ser 201
         mockMvc.perform(post("/api/pedido")
@@ -151,7 +151,7 @@ class AtacadistaApplicationTests {
         var pedidoModel = getPedidoModel(produtoModel, clienteModel, itemDTO);
 
         // função save deve ter sido chamada uma vez com os dados enviados
-        verify(pedidoRepository, times(1)).save(eq(pedidoModel));
+        verify(pedidoRepository, times(1)).save(pedidoModel);
     }
 
     private static Pedido getPedidoModel(Produto produtoModel, Cliente clienteModel, PedidoCadastroDTO.Item itemDTO) {

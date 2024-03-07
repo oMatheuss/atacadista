@@ -10,7 +10,7 @@ import java.util.List;
 
 public record PedidoCadastroDTO(
     @NotNull(message = "O campo cpf é obrigatório")
-    @Pattern(regexp = "^[0-9]{11}$", message = "O campo cpf deve conter 11 caracteres numéricos")
+    @Pattern(regexp = "^\\d{11}$", message = "O campo cpf deve conter 11 caracteres numéricos")
     String cpfCliente,
 
     @NotNull(message = "O campo itens é obrigatório")

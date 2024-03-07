@@ -35,12 +35,12 @@ public class PedidoService {
         double valorTotal = 0D;
 
         for (var item : dto.itens()) {
-            int _numeroItem = numeroItem;
+            int finalNumeroItem = numeroItem;
 
             var produto = produtoRepository.findById(item.codigoProduto())
                     .orElseThrow(() -> new BusinessException(
                             String.format("item %d: codigo (%d) informado não existe",
-                                    _numeroItem, item.codigoProduto())));
+                                    finalNumeroItem, item.codigoProduto())));
 
             double preco = produto.getPreco();
             double valorVenda = item.valorVenda();
@@ -50,7 +50,7 @@ public class PedidoService {
 
             if (desconto > descontoMaximo) {
                 throw new BusinessException(String.format("item %d: desconto maior que o permitido (%.4f)",
-                        _numeroItem, produto.getPercentualMaximoDesconto()));
+                        finalNumeroItem, produto.getPercentualMaximoDesconto()));
             }
 
             var valorTotalItem = item.valorVenda() * item.quantidade();

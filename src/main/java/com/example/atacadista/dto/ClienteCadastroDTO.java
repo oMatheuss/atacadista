@@ -10,7 +10,7 @@ public record ClienteCadastroDTO(
     String nome,
 
     @NotNull(message = "O campo cpf é obrigatório")
-    @Pattern(regexp = "^[0-9]{11}$", message = "O campo cpf deve conter 11 caracteres numéricos")
+    @Pattern(regexp = "^\\d{11}$", message = "O campo cpf deve conter 11 caracteres numéricos")
     String cpf,
 
     @NotNull(message = "O campo uf é obrigatório")
