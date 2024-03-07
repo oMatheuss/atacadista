@@ -13,6 +13,12 @@ Para executar a aplicação execute o comando na pasta do projeto:
 
 A aplicação deve começar a rodar na porta 8080: http://localhost:8080.
 
+Para executar os teste da aplicação execute:
+
+```console
+./mvnw test
+```
+
 ## Documentação
 
 Foi adicionado o **[swagger-ui](https://swagger.io/tools/swagger-ui/)** usando o **[springdoc](https://springdoc.org/)**, após iniciar a aplicação, é possivel acessar ele no link: http://localhost:8080/swagger-ui/index.html
