@@ -2,6 +2,8 @@ package com.example.atacadista.domain;
 
 import jakarta.persistence.*;
 
+import java.util.Objects;
+
 @Entity
 public class Produto {
 
@@ -86,5 +88,18 @@ public class Produto {
                 ", preco=" + preco +
                 ", percentualMaximoDesconto=" + percentualMaximoDesconto +
                 '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Produto produto = (Produto) o;
+        return tipoEmbalagem == produto.tipoEmbalagem && Double.compare(preco, produto.preco) == 0 && Float.compare(percentualMaximoDesconto, produto.percentualMaximoDesconto) == 0 && Objects.equals(codigo, produto.codigo) && Objects.equals(descricao, produto.descricao) && Objects.equals(categoria, produto.categoria);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(codigo, descricao, tipoEmbalagem, categoria, preco, percentualMaximoDesconto);
     }
 }

@@ -2,6 +2,8 @@ package com.example.atacadista.domain;
 
 import jakarta.persistence.*;
 
+import java.util.Objects;
+
 @Entity
 public class Cliente {
 
@@ -62,5 +64,18 @@ public class Cliente {
                 ", cpf='" + cpf + '\'' +
                 ", uf='" + uf + '\'' +
                 '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Cliente cliente = (Cliente) o;
+        return Objects.equals(codigo, cliente.codigo) && Objects.equals(nome, cliente.nome) && Objects.equals(cpf, cliente.cpf) && Objects.equals(uf, cliente.uf);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(codigo, nome, cpf, uf);
     }
 }

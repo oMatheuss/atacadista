@@ -3,6 +3,7 @@ package com.example.atacadista.domain;
 import jakarta.persistence.*;
 
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 
 @Entity
@@ -60,5 +61,28 @@ public class Pedido {
     public void addItem(ItemPedido item) {
         item.setPedido(this);
         itens.add(item);
+    }
+
+    @Override
+    public String toString() {
+        return "Pedido{" +
+                "codigo=" + codigo +
+                ", cliente=" + cliente +
+                ", itens=" + itens +
+                ", valorTotal=" + valorTotal +
+                '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Pedido pedido = (Pedido) o;
+        return Double.compare(valorTotal, pedido.valorTotal) == 0 && Objects.equals(codigo, pedido.codigo) && Objects.equals(cliente, pedido.cliente) && Objects.equals(itens, pedido.itens);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(codigo, cliente, itens, valorTotal);
     }
 }

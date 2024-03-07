@@ -122,4 +122,29 @@ public class ItemPedido {
             return Objects.hash(numeroItem, pedido);
         }
     }
+
+    @Override
+    public String toString() {
+        return "ItemPedido{" +
+                "numeroItem=" + numeroItem +
+                ", produto=" + produto +
+                ", quantidade=" + quantidade +
+                ", valorVenda=" + valorVenda +
+                ", valorTotal=" + valorTotal +
+                ", percentualDesconto=" + percentualDesconto +
+                '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        ItemPedido that = (ItemPedido) o;
+        return quantidade == that.quantidade && Double.compare(valorVenda, that.valorVenda) == 0 && Double.compare(valorTotal, that.valorTotal) == 0 && Float.compare(percentualDesconto, that.percentualDesconto) == 0 && Objects.equals(numeroItem, that.numeroItem) && Objects.equals(produto, that.produto);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(numeroItem, produto, quantidade, valorVenda, valorTotal, percentualDesconto);
+    }
 }
